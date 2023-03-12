@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="323.0" prefWidth="279.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/19" fx:controller="proyecto1datos1.FXMLController">
+    <children>
+        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
+      <Button fx:id="btDummy" layoutX="94.0" layoutY="137.0" mnemonicParsing="false" onAction="#newDummy" text="Dummy Mode" />
+      <Button fx:id="btAdvanced" layoutX="89.0" layoutY="191.0" mnemonicParsing="false" onAction="#newAdvanced" text="Advanced Mode" />
+      <Label layoutX="28.0" layoutY="31.0" text="Bienvenido a Buscaminas">
+         <font>
+            <Font name="Arial Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="88.0" layoutY="78.0" text="Escoge la Dificultad" />
+    </children>
+</AnchorPane>
