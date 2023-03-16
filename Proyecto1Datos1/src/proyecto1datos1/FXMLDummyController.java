@@ -27,7 +27,9 @@ import javafx.scene.text.Font;
  */
 public class FXMLDummyController implements Initializable{
 
-    
+    private boolean perdida=true;
+    private int total=10;
+    private int banderas= this.total;
     private Mines[][] tablero=new Mines[8][8] ;
     @FXML
     private GridPane gdTablero;
@@ -46,12 +48,17 @@ public class FXMLDummyController implements Initializable{
         fillTablero();
         jugar();
     }    
+    public int getBanderas(){
+        return this.banderas;
+    }
     
+    public void setBanderas(int banderas){
+        this.banderas=banderas;
+    }
     public void fillTablero(){
-        int tot=25;
-        lbMines.setText(String.valueOf(tot));
+        lbMines.setText(String.valueOf(this.total));
         int cont=0;
-        while(cont<tot){
+        while(cont<this.total){
             for(int i=0;i<8;i++){
                 for(int j=0;j<8;j++){
                     int rand= (int)(Math.random()*5+1);
@@ -60,9 +67,12 @@ public class FXMLDummyController implements Initializable{
                             tablero[i][j]=new Mines(false);
                         }
                     }else{
-                        if(cont<tot){
+                        if(cont<this.total){
                             tablero[i][j]=new Mines(true);
                             cont++;
+                        }
+                        if(tablero[i][j]==null){
+                            tablero[i][j]=new Mines(false);
                         }
                     }
                 }
@@ -70,6 +80,18 @@ public class FXMLDummyController implements Initializable{
         }
     }
     
+    public boolean checkTerminar(){
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+                if(!this.tablero[i][j].getActivado()){
+                    if(!this.tablero[i][j].getEstado()){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
     public void jugar(){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
@@ -81,10 +103,10 @@ public class FXMLDummyController implements Initializable{
                     @Override
                     public void handle(MouseEvent event) {
                         if(event.getButton()==MouseButton.PRIMARY){
-                            Label lbl=checkCasilla(a,b);
-                            lbl.setFont(new Font("Arial",12));
-                            gdTablero.add(lbl, a, b);
-                            GridPane.setHalignment(lbl, HPos.CENTER);
+                            checkCasilla(a,b,true);
+                        }
+                        if(event.getButton()==MouseButton.SECONDARY){
+                            actualizarMinas(a,b,false,false);
                         }
                     }
                 });
@@ -93,80 +115,184 @@ public class FXMLDummyController implements Initializable{
         }
     }
 
-    private Label checkCasilla(int a, int b) {
-        Label lbl= new Label("");
-        int cant=tablero[a][b].getMina();
-        if(cant==10){
-            for(final Node node : this.gdTablero.getChildren()){
-                if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
-                    if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
-                        node.setDisable(true);
-                    }
-                }
-            }
-            lbl= new Label("M");
-            lbl.setAlignment(Pos.CENTER);
+    public void actualizarMinas(int a, int b,boolean estado,boolean esp){
+        if(estado){
+            this.banderas++;
         }else{
-            try{
-                if(tablero[a-1][b-1].getEstado()){
-                    cant++;
+            this.banderas--;
+        }
+        lbMines.setText(String.valueOf(this.banderas));
+        for(final Node node : this.gdTablero.getChildren()){
+            if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
+                    node.setDisable(true);
+                    Button btn = new Button();
+                    if(estado){
+                        this.tablero[a][b].setBandera(false);
+                        btn.setText("  ");
+                        btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                if(event.getButton()==MouseButton.PRIMARY){
+                                    btn.setVisible(false);
+                                    checkCasilla(a,b,true);
+                                }
+                                if(event.getButton()==MouseButton.SECONDARY){
+                                    btn.setVisible(false);
+                                    actualizarMinas(a,b,false,false);
+                                }
+                            }
+                        });
+                    }else{
+                        this.tablero[a][b].setBandera(true);
+                        btn.setText("B");
+                        btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent event) {
+                                if(event.getButton()==MouseButton.SECONDARY){
+                                    btn.setVisible(false);
+                                    actualizarMinas(a,b,true,false);
+                                }
+                            }
+                        });
+                    }
+                    if(!esp){
+                        this.gdTablero.add(btn, a, b);
+                    }
+                    
+                    
+                    break;
                 }
-            }catch(ArrayIndexOutOfBoundsException exception){
             }
-            try{
-                if(tablero[a-1][b].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a-1][b+1].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a][b-1].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a][b+1].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a+1][b-1].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a+1][b].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
-            try{
-                if(tablero[a+1][b+1].getEstado()){
-                    cant++;
-                }
-            }catch(ArrayIndexOutOfBoundsException exception){
-            }
+        }
+    }
+        
+    private void checkCasilla(int a, int b,boolean game) {
+        Label lbl= new Label("");
+        int cant=this.tablero[a][b].getMina();
+        boolean act= !this.tablero[a][b].getActivado();
+        if(cant==10&&act){
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                     if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
                         node.setDisable(true);
+                        lbl.setText("M");
+                        lbl.setFont(new Font("Arial",12));
+                        lbl.setAlignment(Pos.CENTER);
+                        this.gdTablero.add(lbl, a, b);
+                        GridPane.setHalignment(lbl, HPos.CENTER);
+                        lbResult.setText("Lo lamento has perdido");
+                        this.tablero[a][b].setActivado();
+                        this.perdida=false;
+                        for(int i=0;i<8;i++){
+                            for(int j=0;j<8;j++){
+                                if(game){
+                                    if(!this.tablero[i][j].getBandera()){
+                                        for(final Node node2 : this.gdTablero.getChildren()){
+                                            if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                                                if(node2 instanceof Button){
+                                                    node2.setVisible(false);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    checkCasilla(i,j,false);
+                                }
+                            }
+                        }
+                        break;
                     }
                 }
             }
-            lbl= new Label(String.valueOf(cant));
-            lbl.setAlignment(Pos.CENTER);
+        }else{
+            if(act){
+                try{
+                    if(this.tablero[a-1][b-1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a-1][b].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a-1][b+1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a][b-1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a][b+1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a+1][b-1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a+1][b].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                try{
+                    if(this.tablero[a+1][b+1].getEstado()){
+                        cant++;
+                    }
+                }catch(ArrayIndexOutOfBoundsException exception){
+                }
+                for(final Node node : this.gdTablero.getChildren()){
+                    if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                        if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
+                            node.setDisable(true);
+                            this.tablero[a][b].setActivado();
+                            if(cant==0){
+                                lbl.setText("");
+                            }else{
+                                lbl.setText(String.valueOf(cant));
+                            }
+                            lbl.setAlignment(Pos.CENTER);
+                            lbl.setFont(new Font("Arial",12));
+                            this.gdTablero.add(lbl, a, b);
+                            GridPane.setHalignment(lbl, HPos.CENTER);
+                            if(cant==0){
+                                for(int i=(a-1);i<=(a+1);i++){
+                                    for(int j=(b-1);j<=(b+1);j++){
+                                        try{
+                                            checkCasilla(i,j,true);
+                                        }catch(ArrayIndexOutOfBoundsException exception){                        
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
         }
-        return lbl;
+        if(checkTerminar()&&this.perdida){
+        lbResult.setText("Felicidades has ganado");
+            for(final Node node : this.gdTablero.getChildren()){
+                if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                    if(node instanceof Button){
+                        node.setVisible(false);
+                    }
+                }
+            }
+        }
     }
-    
-    
 }

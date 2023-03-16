@@ -31,7 +31,7 @@
             <RowConstraints minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-      <Label layoutX="17.0" layoutY="87.0" text="Minas Encontradas" />
+      <Label layoutX="17.0" layoutY="87.0" text="Minas Restantes" />
       <Label layoutX="225.0" layoutY="87.0" text="Tiempo" />
       <Label fx:id="lbMines" alignment="CENTER" contentDisplay="CENTER" layoutX="19.0" layoutY="110.0" prefHeight="32.0" prefWidth="100.0" textAlignment="CENTER">
          <font>
