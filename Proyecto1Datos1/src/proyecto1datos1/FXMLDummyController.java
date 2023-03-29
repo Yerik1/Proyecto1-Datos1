@@ -4,8 +4,13 @@
  */
 package proyecto1datos1;
 
+import java.awt.event.ActionListener;
+import javax.swing.Timer;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -27,9 +32,12 @@ import javafx.scene.text.Font;
  */
 public class FXMLDummyController implements Initializable{
 
+    private int timer=0;
     private boolean perdida=true;
     private int total=10;
     private int banderas= this.total;
+    private int turno= 0;
+    private Pila sugerencias = new Pila();
     private Mines[][] tablero=new Mines[8][8] ;
     @FXML
     private GridPane gdTablero;
@@ -39,6 +47,11 @@ public class FXMLDummyController implements Initializable{
     private Label lbTime;
     @FXML
     private Label lbResult;
+    @FXML
+    private Button btPista;
+    @FXML
+    private Label lbPista;
+    private Timer tiempo;
     /**
      * Initializes the controller class.
      */
@@ -46,6 +59,11 @@ public class FXMLDummyController implements Initializable{
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         fillTablero();
+        this.tiempo=new Timer(1000, (java.awt.event.ActionEvent e) -> {
+            this.timer++;
+            Platform.runLater(()->this.lbTime.setText(String.valueOf(this.timer)));
+        });
+        this.tiempo.start();
         jugar();
     }    
     public int getBanderas(){
@@ -168,6 +186,13 @@ public class FXMLDummyController implements Initializable{
     }
         
     private void checkCasilla(int a, int b,boolean game) {
+        if(game){
+            this.turno++;
+        }
+        if(this.turno==5&&game){
+            agregarSugerencia();
+            this.turno=0;
+        }
         Label lbl= new Label("");
         int cant=this.tablero[a][b].getMina();
         boolean act= !this.tablero[a][b].getActivado();
@@ -175,6 +200,7 @@ public class FXMLDummyController implements Initializable{
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                     if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
+                        this.tiempo.stop();
                         node.setDisable(true);
                         lbl.setText("M");
                         lbl.setFont(new Font("Arial",12));
@@ -272,7 +298,7 @@ public class FXMLDummyController implements Initializable{
                                 for(int i=(a-1);i<=(a+1);i++){
                                     for(int j=(b-1);j<=(b+1);j++){
                                         try{
-                                            checkCasilla(i,j,true);
+                                            checkCasilla(i,j,false);
                                         }catch(ArrayIndexOutOfBoundsException exception){                        
                                         }
                                     }
@@ -285,7 +311,8 @@ public class FXMLDummyController implements Initializable{
             }
         }
         if(checkTerminar()&&this.perdida){
-        lbResult.setText("Felicidades has ganado");
+            this.tiempo.stop();
+            lbResult.setText("Felicidades has ganado");
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                     if(node instanceof Button){
@@ -295,4 +322,27 @@ public class FXMLDummyController implements Initializable{
             }
         }
     }
+
+    @FXML
+    private void sugerencia(ActionEvent event) {
+        if(this.sugerencias.peek()==null){
+            this.lbPista.setText("No hay pistas");
+        }else{
+            this.lbPista.setText(this.sugerencias.peek());
+            this.sugerencias.pop();
+        }
+    }
+    
+    public void agregarSugerencia(){
+        boolean agregada=false;
+        while(!agregada){
+            int i= (int)(Math.random()*8);
+            int j= (int)(Math.random()*8);
+            if(!this.tablero[i][j].getActivado()&&!this.tablero[i][j].getEstado()){
+                this.sugerencias.push("Pista: La celda "+String.valueOf(i+1)+" ,"+String.valueOf(j+1)+" es segura.");
+                agregada=true;
+            }
+        }
+    }
+    
 }
