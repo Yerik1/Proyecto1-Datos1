@@ -47,7 +47,14 @@ public class FXMLController implements Initializable {
     }
 
     @FXML
-    private void newAdvanced(ActionEvent event) {
+    private void newAdvanced(ActionEvent event) throws Exception{
+        Stage stage= new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("FXMLAdvanced.fxml"));
+        
+        Scene scene = new Scene(root);
+        
+        stage.setScene(scene);
+        stage.show();
     }
     
 }

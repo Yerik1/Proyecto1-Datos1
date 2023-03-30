@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 /**
@@ -121,7 +122,7 @@ public class FXMLDummyController implements Initializable{
                     @Override
                     public void handle(MouseEvent event) {
                         if(event.getButton()==MouseButton.PRIMARY){
-                            checkCasilla(a,b,true);
+                            checkCasilla(a,b,true,0);
                         }
                         if(event.getButton()==MouseButton.SECONDARY){
                             actualizarMinas(a,b,false,false);
@@ -153,7 +154,7 @@ public class FXMLDummyController implements Initializable{
                             public void handle(MouseEvent event) {
                                 if(event.getButton()==MouseButton.PRIMARY){
                                     btn.setVisible(false);
-                                    checkCasilla(a,b,true);
+                                    checkCasilla(a,b,true,0);
                                 }
                                 if(event.getButton()==MouseButton.SECONDARY){
                                     btn.setVisible(false);
@@ -185,8 +186,8 @@ public class FXMLDummyController implements Initializable{
         }
     }
         
-    private void checkCasilla(int a, int b,boolean game) {
-        if(game){
+    private void checkCasilla(int a, int b,boolean game,int jugador) {
+        if(game&&jugador==0){
             this.turno++;
         }
         if(this.turno==5&&game){
@@ -205,9 +206,17 @@ public class FXMLDummyController implements Initializable{
                         lbl.setText("M");
                         lbl.setFont(new Font("Arial",12));
                         lbl.setAlignment(Pos.CENTER);
+                        if(game){
+                            if(jugador==0){
+                                lbl.setTextFill(Color.BLUE);
+                                lbResult.setText("Lo lamento has perdido");
+                            }else{
+                                lbl.setTextFill(Color.RED);
+                                lbResult.setText("Felicidades has ganado");
+                            }
+                        }
                         this.gdTablero.add(lbl, a, b);
                         GridPane.setHalignment(lbl, HPos.CENTER);
-                        lbResult.setText("Lo lamento has perdido");
                         this.tablero[a][b].setActivado();
                         this.perdida=false;
                         for(int i=0;i<8;i++){
@@ -222,7 +231,7 @@ public class FXMLDummyController implements Initializable{
                                             }
                                         }
                                     }
-                                    checkCasilla(i,j,false);
+                                    checkCasilla(i,j,false,jugador);
                                 }
                             }
                         }
@@ -286,19 +295,30 @@ public class FXMLDummyController implements Initializable{
                             node.setDisable(true);
                             this.tablero[a][b].setActivado();
                             if(cant==0){
-                                lbl.setText("");
+                                if(game){
+                                    lbl.setText("*");
+                                }else{
+                                    lbl.setText("");
+                                }
                             }else{
                                 lbl.setText(String.valueOf(cant));
                             }
                             lbl.setAlignment(Pos.CENTER);
                             lbl.setFont(new Font("Arial",12));
+                            if(game){
+                                if(jugador==0){
+                                    lbl.setTextFill(Color.BLUE);
+                                }else{
+                                    lbl.setTextFill(Color.RED);
+                                }
+                            }
                             this.gdTablero.add(lbl, a, b);
                             GridPane.setHalignment(lbl, HPos.CENTER);
                             if(cant==0){
                                 for(int i=(a-1);i<=(a+1);i++){
                                     for(int j=(b-1);j<=(b+1);j++){
                                         try{
-                                            checkCasilla(i,j,false);
+                                            checkCasilla(i,j,false,0);
                                         }catch(ArrayIndexOutOfBoundsException exception){                        
                                         }
                                     }
@@ -320,6 +340,9 @@ public class FXMLDummyController implements Initializable{
                     }
                 }
             }
+        }
+        if(this.perdida&&jugador==0&&game){
+            jugarCompu();
         }
     }
 
@@ -343,6 +366,19 @@ public class FXMLDummyController implements Initializable{
                 agregada=true;
             }
         }
+    }
+    
+    public void jugarCompu(){
+        boolean jugado=false;
+        while(!jugado){
+            int i= (int)(Math.random()*8);
+            int j= (int)(Math.random()*8);
+            if(!this.tablero[i][j].getActivado()){
+                checkCasilla(i,j,true,1);
+                jugado=true;
+            }
+        }
+        
     }
     
 }
