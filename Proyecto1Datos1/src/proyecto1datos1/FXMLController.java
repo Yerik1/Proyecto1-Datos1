@@ -15,11 +15,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
-import static javafx.application.Application.launch;
 
 /**
- *
- * @author kondy
+ * Clase para controlador de la interfaz grafica del menu (principal)
+ * @author Yerik
  */
 public class FXMLController implements Initializable {
     
@@ -31,28 +30,39 @@ public class FXMLController implements Initializable {
     private Button btAdvanced;
     
     @Override
+    /**
+     * Metodo que inicializa la ventana, por defecto al crear el controlador
+     */
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
 
     @FXML
+    /**
+     * Metodo asociado al boton dummy, se encarga de abrir la ventana de juego en modo
+     * dummy
+     */
     private void newDummy(ActionEvent event) throws Exception {
+        //se crea la ventana con el formato de juego dummy
         Stage stage= new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDummy.fxml"));
-        
         Scene scene = new Scene(root);
-        
+        //se asocia el contenido a la ventana y se abre la ventana
         stage.setScene(scene);
         stage.show();
     }
 
     @FXML
+    /**
+     * Metodo asociado al boton advanced, se encarga de abrir la ventana de juego en modo
+     * advanced
+     */
     private void newAdvanced(ActionEvent event) throws Exception{
+        //se crea la ventana con el formato de juego advanced
         Stage stage= new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("FXMLAdvanced.fxml"));
-        
         Scene scene = new Scene(root);
-        
+        //se asocia el contenido a la ventana y se abre la ventana
         stage.setScene(scene);
         stage.show();
     }
