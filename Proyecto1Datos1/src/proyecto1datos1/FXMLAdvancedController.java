@@ -35,7 +35,7 @@ public class FXMLAdvancedController implements Initializable {
     private int banderas= this.total;
     private int turno= 0;
     private Pila sugerencias = new Pila();
-    private Mines[][] tablero=new Mines[8][8] ;
+    private Tablero tablero;
     @FXML
     private GridPane gdTablero;
     @FXML
@@ -59,7 +59,8 @@ public class FXMLAdvancedController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        fillTablero();
+        lbMines.setText(String.valueOf(this.total));
+        tablero=new Tablero(this.total);
         this.tiempo=new Timer(1000, (java.awt.event.ActionEvent e) -> {
             this.timer++;
             Platform.runLater(()->this.lbTime.setText(String.valueOf(this.timer)));
@@ -74,43 +75,7 @@ public class FXMLAdvancedController implements Initializable {
     public void setBanderas(int banderas){
         this.banderas=banderas;
     }
-    public void fillTablero(){
-        lbMines.setText(String.valueOf(this.total));
-        int cont=0;
-        while(cont<this.total){
-            for(int i=0;i<8;i++){
-                for(int j=0;j<8;j++){
-                    int rand= (int)(Math.random()*5+1);
-                    if(rand>1){
-                        if(tablero[i][j]==null){
-                            tablero[i][j]=new Mines(false);
-                        }
-                    }else{
-                        if(cont<this.total){
-                            tablero[i][j]=new Mines(true);
-                            cont++;
-                        }
-                        if(tablero[i][j]==null){
-                            tablero[i][j]=new Mines(false);
-                        }
-                    }
-                }
-            }
-        }
-    }
     
-    public boolean checkTerminar(){
-        for(int i=0;i<8;i++){
-            for(int j=0;j<8;j++){
-                if(!this.tablero[i][j].getActivado()){
-                    if(!this.tablero[i][j].getEstado()){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
     public void jugar(){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
@@ -147,7 +112,7 @@ public class FXMLAdvancedController implements Initializable {
                     node.setDisable(true);
                     Button btn = new Button();
                     if(estado){
-                        this.tablero[a][b].setBandera(false);
+                        this.tablero.getTablero()[a][b].setBandera(false);
                         btn.setText("  ");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -163,7 +128,7 @@ public class FXMLAdvancedController implements Initializable {
                             }
                         });
                     }else{
-                        this.tablero[a][b].setBandera(true);
+                        this.tablero.getTablero()[a][b].setBandera(true);
                         btn.setText("B");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -195,8 +160,8 @@ public class FXMLAdvancedController implements Initializable {
             this.turno=0;
         }
         Label lbl= new Label("");
-        int cant=this.tablero[a][b].getMina();
-        boolean act= !this.tablero[a][b].getActivado();
+        int cant=this.tablero.getTablero()[a][b].getMina();
+        boolean act= !this.tablero.getTablero()[a][b].getActivado();
         if(cant==10&&act){
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
@@ -217,12 +182,12 @@ public class FXMLAdvancedController implements Initializable {
                         }
                         this.gdTablero.add(lbl, a, b);
                         GridPane.setHalignment(lbl, HPos.CENTER);
-                        this.tablero[a][b].setActivado();
+                        this.tablero.getTablero()[a][b].setActivado();
                         this.perdida=false;
                         for(int i=0;i<8;i++){
                             for(int j=0;j<8;j++){
                                 if(game){
-                                    if(!this.tablero[i][j].getBandera()){
+                                    if(!this.tablero.getTablero()[a][b].getBandera()){
                                         for(final Node node2 : this.gdTablero.getChildren()){
                                             if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                                                 if(node2 instanceof Button){
@@ -246,7 +211,7 @@ public class FXMLAdvancedController implements Initializable {
                     if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                         if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
                             node.setDisable(true);
-                            this.tablero[a][b].setActivado();
+                            this.tablero.getTablero()[a][b].setActivado();
                             if(cant==0){
                                 if(game){
                                     lbl.setText("*");
@@ -283,7 +248,7 @@ public class FXMLAdvancedController implements Initializable {
                 }
             }
         }
-        if(checkTerminar()&&this.perdida){
+        if(tablero.checkTerminar()&&this.perdida){
             this.tiempo.stop();
             lbResult.setText("Felicidades has ganado");
             for(final Node node : this.gdTablero.getChildren()){
@@ -314,7 +279,7 @@ public class FXMLAdvancedController implements Initializable {
         while(!agregada){
             int i= (int)(Math.random()*8);
             int j= (int)(Math.random()*8);
-            if(!this.tablero[i][j].getActivado()&&!this.tablero[i][j].getEstado()){
+            if(!this.tablero.getTablero()[i][j].getActivado()&&!this.tablero.getTablero()[i][j].getEstado()){
                 this.sugerencias.push("Pista: La celda "+String.valueOf(i+1)+" ,"+String.valueOf(j+1)+" es segura.");
                 agregada=true;
             }
@@ -324,7 +289,7 @@ public class FXMLAdvancedController implements Initializable {
     public void jugarCompu(){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
-                if(!this.tablero[i][j].getActivado()){
+                if(!this.tablero.getTablero()[i][j].getActivado()){
                     Nodo nuevo=new Nodo(i,j);
                     Nodo copia=new Nodo(i,j);
                     if(checkMina(nuevo)){
@@ -385,7 +350,7 @@ public class FXMLAdvancedController implements Initializable {
         int i=casilla.getI();
         int j=casilla.getJ();
         try{
-            if(this.tablero[i-1][j-1].getActivado()){
+            if(this.tablero.getTablero()[i-1][j-1].getActivado()){
                 if(checkAlrededor(i-1,j-1)==checkCantidad(i-1,j-1)){
                     seguro=true;
                 }
@@ -393,7 +358,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j].getActivado()){
+            if(this.tablero.getTablero()[i-1][j].getActivado()){
                 if(checkAlrededor(i-1,j)==checkCantidad(i-1,j)){
                     seguro=true;
                     
@@ -402,7 +367,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j+1].getActivado()){
+            if(this.tablero.getTablero()[i-1][j+1].getActivado()){
                 if(checkAlrededor(i-1,j+1)==checkCantidad(i-1,j+1)){
                     seguro=true;
                     
@@ -411,7 +376,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j-1].getActivado()){
+            if(this.tablero.getTablero()[i][j-1].getActivado()){
                 if(checkAlrededor(i,j-1)==checkCantidad(i,j-1)){
                     seguro=true;
                     
@@ -420,7 +385,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j+1].getActivado()){
+            if(this.tablero.getTablero()[i][j+1].getActivado()){
                 if(checkAlrededor(i,j+1)==checkCantidad(i,j+1)){
                     seguro=true;
                     
@@ -429,7 +394,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j-1].getActivado()){
+            if(this.tablero.getTablero()[i+1][j-1].getActivado()){
                 if(checkAlrededor(i+1,j-1)==checkCantidad(i+1,j-1)){
                     seguro=true;
                     
@@ -438,7 +403,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j].getActivado()){
+            if(this.tablero.getTablero()[i+1][j].getActivado()){
                 if(checkAlrededor(i+1,j)==checkCantidad(i+1,j)){
                     seguro=true;
                 }
@@ -446,7 +411,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j+1].getActivado()){
+            if(this.tablero.getTablero()[i+1][j+1].getActivado()){
                 if(checkAlrededor(i+1,j+1)==checkCantidad(i+1,j+1)){
                     seguro=true;
                 }
@@ -459,49 +424,49 @@ public class FXMLAdvancedController implements Initializable {
     public int checkCantidad(int i,int j){
         int cant=0;
         try{
-            if(this.tablero[i-1][j-1].getEstado()){
+            if(this.tablero.getTablero()[i-1][j-1].getEstado()){
                cant++;
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j].getEstado()){
+            if(this.tablero.getTablero()[i-1][j].getEstado()){
                cant++;      
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j+1].getEstado()){
+            if(this.tablero.getTablero()[i-1][j+1].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j-1].getEstado()){
+            if(this.tablero.getTablero()[i][j-1].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j+1].getEstado()){
+            if(this.tablero.getTablero()[i][j+1].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j-1].getEstado()){
+            if(this.tablero.getTablero()[i+1][j-1].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j].getEstado()){
+            if(this.tablero.getTablero()[i+1][j].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j+1].getEstado()){
+            if(this.tablero.getTablero()[i+1][j+1].getEstado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
@@ -512,49 +477,49 @@ public class FXMLAdvancedController implements Initializable {
     public int checkAlrededor(int i, int j){
         int cant=0;
         try{
-            if(!this.tablero[i-1][j-1].getActivado()){
+            if(!this.tablero.getTablero()[i-1][j-1].getActivado()){
                cant++; 
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i-1][j].getActivado()){
+            if(!this.tablero.getTablero()[i-1][j].getActivado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i-1][j+1].getActivado()){
+            if(!this.tablero.getTablero()[i-1][j+1].getActivado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i][j-1].getActivado()){
+            if(!this.tablero.getTablero()[i][j-1].getActivado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i][j+1].getActivado()){
+            if(!this.tablero.getTablero()[i][j+1].getActivado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i+1][j-1].getActivado()){
+            if(!this.tablero.getTablero()[i+1][j-1].getActivado()){
                cant++;  
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i+1][j].getActivado()){
+            if(!this.tablero.getTablero()[i+1][j].getActivado()){
                cant++;       
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(!this.tablero[i+1][j+1].getActivado()){
+            if(!this.tablero.getTablero()[i+1][j+1].getActivado()){
                cant++;
             }
         }catch(ArrayIndexOutOfBoundsException exception){
@@ -565,48 +530,48 @@ public class FXMLAdvancedController implements Initializable {
     public int getAlrededor(int i, int j){
         int cant=0;
         try{
-            this.tablero[i-1][j-1].getMina();
+            this.tablero.getTablero()[i-1][j-1].getMina();
             cant++;
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i-1][j].getMina();
+            this.tablero.getTablero()[i-1][j].getMina();
             cant++;  
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i-1][j+1].getMina();
+            this.tablero.getTablero()[i-1][j+1].getMina();
             cant++;  
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i][j-1].getMina();
+            this.tablero.getTablero()[i][j-1].getMina();
             cant++;  
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i][j+1].getMina();
+            this.tablero.getTablero()[i][j+1].getMina();
             cant++;  
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i+1][j-1].getMina();
+            this.tablero.getTablero()[i+1][j-1].getMina();
             cant++;  
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i+1][j].getMina();
+            this.tablero.getTablero()[i+1][j].getMina();
             cant++;       
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            this.tablero[i+1][j+1].getMina();
+            this.tablero.getTablero()[i+1][j+1].getMina();
             cant++;
             
         }catch(ArrayIndexOutOfBoundsException exception){
@@ -619,7 +584,7 @@ public class FXMLAdvancedController implements Initializable {
         int j=nodo.getJ();
         boolean resultado=false;
         try{
-            if(this.tablero[i-1][j-1].getActivado()){
+            if(this.tablero.getTablero()[i-1][j-1].getActivado()){
                 System.out.println("1");
                 System.out.println(String.valueOf(checkCantidad(i-1,j-1)));
                 System.out.println(String.valueOf(checkHumano(i-1,j-1)));
@@ -630,7 +595,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j].getActivado()){
+            if(this.tablero.getTablero()[i-1][j].getActivado()){
                 System.out.println("2");
                 System.out.println(String.valueOf(checkCantidad(i-1,j)));
                 System.out.println(String.valueOf(checkHumano(i-1,j)));
@@ -641,7 +606,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i-1][j+1].getActivado()){
+            if(this.tablero.getTablero()[i-1][j+1].getActivado()){
                 System.out.println("4");
                 System.out.println(String.valueOf(checkCantidad(i-1,j+1)));
                 System.out.println(String.valueOf(checkHumano(i-1,j+1)));
@@ -652,7 +617,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j-1].getActivado()){
+            if(this.tablero.getTablero()[i][j-1].getActivado()){
                 System.out.println("4");
                 System.out.println(String.valueOf(checkCantidad(i,j-1)));
                 System.out.println(String.valueOf(checkHumano(i,j-1)));
@@ -663,7 +628,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i][j+1].getActivado()){
+            if(this.tablero.getTablero()[i][j+1].getActivado()){
                 System.out.println("5");
                 System.out.println(String.valueOf(checkCantidad(i,j+1)));
                 System.out.println(String.valueOf(checkHumano(i,j+1)));
@@ -674,7 +639,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j-1].getActivado()){
+            if(this.tablero.getTablero()[i+1][j-1].getActivado()){
                 System.out.println("6");
                 System.out.println(String.valueOf(checkCantidad(i+1,j-1)));
                 System.out.println(String.valueOf(checkHumano(i+1,j-1)));
@@ -685,7 +650,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j].getActivado()){
+            if(this.tablero.getTablero()[i+1][j].getActivado()){
                 System.out.println("7");
                 System.out.println(String.valueOf(checkCantidad(i+1,j)));
                 System.out.println(String.valueOf(checkHumano(i+1,j)));
@@ -696,7 +661,7 @@ public class FXMLAdvancedController implements Initializable {
         }catch(ArrayIndexOutOfBoundsException exception){
         }
         try{
-            if(this.tablero[i+1][j+1].getActivado()){
+            if(this.tablero.getTablero()[i+1][j+1].getActivado()){
                 System.out.println("8");
                 System.out.println(String.valueOf(checkCantidad(i+1,j+1)));
                 System.out.println(String.valueOf(checkHumano(i+1,j+1)));

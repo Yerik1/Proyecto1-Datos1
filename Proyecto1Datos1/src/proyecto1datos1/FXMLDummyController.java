@@ -39,7 +39,7 @@ public class FXMLDummyController implements Initializable{
     private int banderas= this.total;
     private int turno= 0;
     private Pila sugerencias = new Pila();
-    private Mines[][] tablero=new Mines[8][8] ;
+    private Tablero tablero;
     @FXML
     private GridPane gdTablero;
     @FXML
@@ -59,7 +59,8 @@ public class FXMLDummyController implements Initializable{
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        fillTablero();
+        lbMines.setText(String.valueOf(this.total));
+        tablero=new Tablero(this.total);
         this.tiempo=new Timer(1000, (java.awt.event.ActionEvent e) -> {
             this.timer++;
             Platform.runLater(()->this.lbTime.setText(String.valueOf(this.timer)));
@@ -67,50 +68,8 @@ public class FXMLDummyController implements Initializable{
         this.tiempo.start();
         jugar();
     }    
-    public int getBanderas(){
-        return this.banderas;
-    }
     
-    public void setBanderas(int banderas){
-        this.banderas=banderas;
-    }
-    public void fillTablero(){
-        lbMines.setText(String.valueOf(this.total));
-        int cont=0;
-        while(cont<this.total){
-            for(int i=0;i<8;i++){
-                for(int j=0;j<8;j++){
-                    int rand= (int)(Math.random()*5+1);
-                    if(rand>1){
-                        if(tablero[i][j]==null){
-                            tablero[i][j]=new Mines(false);
-                        }
-                    }else{
-                        if(cont<this.total){
-                            tablero[i][j]=new Mines(true);
-                            cont++;
-                        }
-                        if(tablero[i][j]==null){
-                            tablero[i][j]=new Mines(false);
-                        }
-                    }
-                }
-            }
-        }
-    }
     
-    public boolean checkTerminar(){
-        for(int i=0;i<8;i++){
-            for(int j=0;j<8;j++){
-                if(!this.tablero[i][j].getActivado()){
-                    if(!this.tablero[i][j].getEstado()){
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
     public void jugar(){
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
@@ -147,7 +106,7 @@ public class FXMLDummyController implements Initializable{
                     node.setDisable(true);
                     Button btn = new Button();
                     if(estado){
-                        this.tablero[a][b].setBandera(false);
+                        this.tablero.getTablero()[a][b].setBandera(false);
                         btn.setText("  ");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -163,7 +122,7 @@ public class FXMLDummyController implements Initializable{
                             }
                         });
                     }else{
-                        this.tablero[a][b].setBandera(true);
+                        this.tablero.getTablero()[a][b].setBandera(true);
                         btn.setText("B");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -195,8 +154,8 @@ public class FXMLDummyController implements Initializable{
             this.turno=0;
         }
         Label lbl= new Label("");
-        int cant=this.tablero[a][b].getMina();
-        boolean act= !this.tablero[a][b].getActivado();
+        int cant=this.tablero.getTablero()[a][b].getMina();
+        boolean act= !this.tablero.getTablero()[a][b].getActivado();
         if(cant==10&&act){
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
@@ -217,12 +176,12 @@ public class FXMLDummyController implements Initializable{
                         }
                         this.gdTablero.add(lbl, a, b);
                         GridPane.setHalignment(lbl, HPos.CENTER);
-                        this.tablero[a][b].setActivado();
+                        this.tablero.getTablero()[a][b].setActivado();
                         this.perdida=false;
                         for(int i=0;i<8;i++){
                             for(int j=0;j<8;j++){
                                 if(game){
-                                    if(!this.tablero[i][j].getBandera()){
+                                    if(!this.tablero.getTablero()[i][j].getBandera()){
                                         for(final Node node2 : this.gdTablero.getChildren()){
                                             if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                                                 if(node2 instanceof Button){
@@ -242,49 +201,49 @@ public class FXMLDummyController implements Initializable{
         }else{
             if(act){
                 try{
-                    if(this.tablero[a-1][b-1].getEstado()){
+                    if(this.tablero.getTablero()[a-1][b-1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a-1][b].getEstado()){
+                    if(this.tablero.getTablero()[a-1][b].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a-1][b+1].getEstado()){
+                    if(this.tablero.getTablero()[a-1][b+1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a][b-1].getEstado()){
+                    if(this.tablero.getTablero()[a][b-1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a][b+1].getEstado()){
+                    if(this.tablero.getTablero()[a][b+1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a+1][b-1].getEstado()){
+                    if(this.tablero.getTablero()[a+1][b-1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a+1][b].getEstado()){
+                    if(this.tablero.getTablero()[a+1][b].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
                 }
                 try{
-                    if(this.tablero[a+1][b+1].getEstado()){
+                    if(this.tablero.getTablero()[a+1][b+1].getEstado()){
                         cant++;
                     }
                 }catch(ArrayIndexOutOfBoundsException exception){
@@ -292,8 +251,8 @@ public class FXMLDummyController implements Initializable{
                 for(final Node node : this.gdTablero.getChildren()){
                     if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                         if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
-                            node.setDisable(true);
-                            this.tablero[a][b].setActivado();
+                            node.setVisible(false);
+                            this.tablero.getTablero()[a][b].setActivado();
                             if(cant==0){
                                 if(game){
                                     lbl.setText("*");
@@ -330,7 +289,7 @@ public class FXMLDummyController implements Initializable{
                 }
             }
         }
-        if(checkTerminar()&&this.perdida){
+        if(this.tablero.checkTerminar()&&this.perdida){
             this.tiempo.stop();
             lbResult.setText("Felicidades has ganado");
             for(final Node node : this.gdTablero.getChildren()){
@@ -361,7 +320,7 @@ public class FXMLDummyController implements Initializable{
         while(!agregada){
             int i= (int)(Math.random()*8);
             int j= (int)(Math.random()*8);
-            if(!this.tablero[i][j].getActivado()&&!this.tablero[i][j].getEstado()){
+            if(!this.tablero.getTablero()[i][j].getActivado()&&!this.tablero.getTablero()[i][j].getEstado()){
                 this.sugerencias.push("Pista: La celda "+String.valueOf(i+1)+" ,"+String.valueOf(j+1)+" es segura.");
                 agregada=true;
             }
@@ -373,8 +332,17 @@ public class FXMLDummyController implements Initializable{
         while(!jugado){
             int i= (int)(Math.random()*8);
             int j= (int)(Math.random()*8);
-            if(!this.tablero[i][j].getActivado()){
+            if(!this.tablero.getTablero()[i][j].getActivado()){
                 checkCasilla(i,j,true,1);
+                for(final Node node : this.gdTablero.getChildren()){
+                    if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                        if(GridPane.getColumnIndex(node)==i&&GridPane.getRowIndex(node)==j){
+                            if(node instanceof Button){
+                                node.setVisible(false);
+                            }
+                        }
+                    }
+                }
                 jugado=true;
             }
         }
