@@ -82,6 +82,7 @@ public class FXMLAdvancedController implements Initializable {
                 Button btn=new Button("  ");
                 int a =i;
                 int b =j;
+                btn.setId("normal");
                 btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     
                     @Override
@@ -219,7 +220,9 @@ public class FXMLAdvancedController implements Initializable {
                                         if(node2 instanceof Button){
                                             if(node2.getId().equalsIgnoreCase("bandera")){
                                                 this.banderas++;
+                                                this.lbMines.setText(String.valueOf(this.banderas));
                                             }
+                                            
                                             node2.setVisible(false);
                                         }
                                         
@@ -351,6 +354,7 @@ public class FXMLAdvancedController implements Initializable {
                             if(node instanceof Button){
                                 if(node.getId().equalsIgnoreCase("bandera")){
                                     this.banderas++;
+                                    this.lbMines.setText(String.valueOf(this.banderas));
                                 }
                                 node.setVisible(false);
                             }
@@ -368,6 +372,7 @@ public class FXMLAdvancedController implements Initializable {
                                 node.setVisible(false);
                                 if(node.getId().equalsIgnoreCase("bandera")){
                                     this.banderas++;
+                                    this.lbMines.setText(String.valueOf(this.banderas));
                                 }
                             }
                         }
