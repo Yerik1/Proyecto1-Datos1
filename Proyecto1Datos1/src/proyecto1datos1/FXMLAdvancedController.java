@@ -211,6 +211,16 @@ public class FXMLAdvancedController implements Initializable {
                     if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                         if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
                             node.setDisable(true);
+                            for(final Node node2 : this.gdTablero.getChildren()){
+                                if(GridPane.getColumnIndex(node2)!=null&&GridPane.getRowIndex(node2)!=null){
+                                    if(GridPane.getColumnIndex(node2)==a&&GridPane.getRowIndex(node2)==b){
+                                        if(node2 instanceof Button){
+                                            node2.setVisible(false);
+                                        }
+                                        
+                                    }
+                                }
+                            }
                             this.tablero.getTablero()[a][b].setActivado();
                             if(cant==0){
                                 if(game){
@@ -330,10 +340,28 @@ public class FXMLAdvancedController implements Initializable {
         if(this.segura.getHead()!=null){
             Nodo jugada=this.segura.buscarAleatorio();
             checkCasilla(jugada.getI(),jugada.getJ(),true,1);
+            for(final Node node : this.gdTablero.getChildren()){
+                    if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                        if(GridPane.getColumnIndex(node)==jugada.getI()&&GridPane.getRowIndex(node)==jugada.getJ()){
+                            if(node instanceof Button){
+                                node.setVisible(false);
+                            }
+                        }
+                    }
+                }
             System.out.println("Casilla "+String.valueOf(jugada.getI()+1)+", "+String.valueOf(jugada.getJ()+1)+" jugada segura");
         }else{
             Nodo jugada=this.incertidumbre.buscarAleatorio();
             checkCasilla(jugada.getI(),jugada.getJ(),true,1);
+            for(final Node node : this.gdTablero.getChildren()){
+                    if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
+                        if(GridPane.getColumnIndex(node)==jugada.getJ()&&GridPane.getRowIndex(node)==jugada.getJ()){
+                            if(node instanceof Button){
+                                node.setVisible(false);
+                            }
+                        }
+                    }
+                }
             System.out.println("Casilla "+String.valueOf(jugada.getI()+1)+", "+String.valueOf(jugada.getJ()+1)+" jugada incertidumbre");
         }
         this.general.eliminarLista();

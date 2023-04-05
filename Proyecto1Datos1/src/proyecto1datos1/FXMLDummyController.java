@@ -252,6 +252,17 @@ public class FXMLDummyController implements Initializable{
                     if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                         if(GridPane.getColumnIndex(node)==a&&GridPane.getRowIndex(node)==b){
                             node.setVisible(false);
+                            for(final Node node2 : this.gdTablero.getChildren()){
+                                if(GridPane.getColumnIndex(node2)!=null&&GridPane.getRowIndex(node2)!=null){
+                                    if(GridPane.getColumnIndex(node2)==a&&GridPane.getRowIndex(node2)==b){
+                                        if(node2 instanceof Button){
+                                            node2.setVisible(false);
+                                        }
+                                        
+                                    }
+                                }
+                            }
+                            node.setVisible(false);
                             this.tablero.getTablero()[a][b].setActivado();
                             if(cant==0){
                                 if(game){
