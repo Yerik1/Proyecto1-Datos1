@@ -76,6 +76,7 @@ public class FXMLDummyController implements Initializable{
                 Button btn=new Button("  ");
                 int a =i;
                 int b =j;
+                btn.setId("normal");
                 btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                     
                     @Override
@@ -112,10 +113,12 @@ public class FXMLDummyController implements Initializable{
                             @Override
                             public void handle(MouseEvent event) {
                                 if(event.getButton()==MouseButton.PRIMARY){
+                                    btn.setId("normal");
                                     btn.setVisible(false);
                                     checkCasilla(a,b,true,0);
                                 }
                                 if(event.getButton()==MouseButton.SECONDARY){
+                                    btn.setId("bandera");
                                     btn.setVisible(false);
                                     actualizarMinas(a,b,false,false);
                                 }
@@ -123,6 +126,7 @@ public class FXMLDummyController implements Initializable{
                         });
                     }else{
                         this.tablero.getTablero()[a][b].setBandera(true);
+                        btn.setId("bandera");
                         btn.setText("B");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -256,6 +260,10 @@ public class FXMLDummyController implements Initializable{
                                 if(GridPane.getColumnIndex(node2)!=null&&GridPane.getRowIndex(node2)!=null){
                                     if(GridPane.getColumnIndex(node2)==a&&GridPane.getRowIndex(node2)==b){
                                         if(node2 instanceof Button){
+                                            if(node2.getId().equalsIgnoreCase("bandera")){
+                                                this.banderas++;
+                                            }
+                                            this.lbMines.setText(String.valueOf(this.banderas));
                                             node2.setVisible(false);
                                         }
                                         
@@ -350,6 +358,20 @@ public class FXMLDummyController implements Initializable{
                         if(GridPane.getColumnIndex(node)==i&&GridPane.getRowIndex(node)==j){
                             if(node instanceof Button){
                                 node.setVisible(false);
+                            }
+                            for(final Node node2 : this.gdTablero.getChildren()){
+                                if(GridPane.getColumnIndex(node2)!=null&&GridPane.getRowIndex(node2)!=null){
+                                    if(GridPane.getColumnIndex(node2)==i&&GridPane.getRowIndex(node2)==j){
+                                        if(node2 instanceof Button){
+                                            if(node2.getId().equalsIgnoreCase("bandera")){
+                                                this.banderas++;
+                                                this.lbMines.setText(String.valueOf(this.banderas));
+                                            }
+                                            node2.setVisible(false);
+                                        }
+                                        
+                                    }
+                                }
                             }
                         }
                     }

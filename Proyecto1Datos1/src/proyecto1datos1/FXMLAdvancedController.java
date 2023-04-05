@@ -113,6 +113,7 @@ public class FXMLAdvancedController implements Initializable {
                     Button btn = new Button();
                     if(estado){
                         this.tablero.getTablero()[a][b].setBandera(false);
+                        btn.setId("normal");
                         btn.setText("  ");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -129,6 +130,7 @@ public class FXMLAdvancedController implements Initializable {
                         });
                     }else{
                         this.tablero.getTablero()[a][b].setBandera(true);
+                        btn.setId("bandera");
                         btn.setText("B");
                         btn.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -215,6 +217,9 @@ public class FXMLAdvancedController implements Initializable {
                                 if(GridPane.getColumnIndex(node2)!=null&&GridPane.getRowIndex(node2)!=null){
                                     if(GridPane.getColumnIndex(node2)==a&&GridPane.getRowIndex(node2)==b){
                                         if(node2 instanceof Button){
+                                            if(node2.getId().equalsIgnoreCase("bandera")){
+                                                this.banderas++;
+                                            }
                                             node2.setVisible(false);
                                         }
                                         
@@ -263,7 +268,7 @@ public class FXMLAdvancedController implements Initializable {
             lbResult.setText("Felicidades has ganado");
             for(final Node node : this.gdTablero.getChildren()){
                 if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
-                    if(node instanceof Button){
+                    if(node instanceof Button){    
                         node.setVisible(false);
                     }
                 }
@@ -344,6 +349,9 @@ public class FXMLAdvancedController implements Initializable {
                     if(GridPane.getColumnIndex(node)!=null&&GridPane.getRowIndex(node)!=null){
                         if(GridPane.getColumnIndex(node)==jugada.getI()&&GridPane.getRowIndex(node)==jugada.getJ()){
                             if(node instanceof Button){
+                                if(node.getId().equalsIgnoreCase("bandera")){
+                                    this.banderas++;
+                                }
                                 node.setVisible(false);
                             }
                         }
@@ -358,6 +366,9 @@ public class FXMLAdvancedController implements Initializable {
                         if(GridPane.getColumnIndex(node)==jugada.getJ()&&GridPane.getRowIndex(node)==jugada.getJ()){
                             if(node instanceof Button){
                                 node.setVisible(false);
+                                if(node.getId().equalsIgnoreCase("bandera")){
+                                    this.banderas++;
+                                }
                             }
                         }
                     }
