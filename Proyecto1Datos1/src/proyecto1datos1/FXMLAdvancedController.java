@@ -457,56 +457,88 @@ public class FXMLAdvancedController implements Initializable {
      * Metodo para el movimiento de la compu
      */
     public void jugarCompu(){
+        //recorre el tablero de juego
         for(int i=0;i<8;i++){
             for(int j=0;j<8;j++){
+                //verifica si la casilla ha sido jugada 
                 if(!this.tablero.getTablero()[i][j].getActivado()){
+                    //genera un nodo para la lista general y para la lista de copia
                     Nodo nuevo=new Nodo(i,j);
                     Nodo copia=new Nodo(i,j);
+                    //revisa si es humanamenteposible desifrar si es mina
                     if(checkMina(nuevo)){
+                        //indica que la casilla de los nodos son mina
                         nuevo.setEsMina();
                         copia.setEsMina();
+                        //print a consola
                         System.out.println("Casilla "+String.valueOf(i+1)+", "+String.valueOf(j+1)+" es mina");
                     }
+                    //se agrega el nodo a las listas
                     this.general.agregar(nuevo);
                     this.registro.agregar(copia);
                     System.out.println("Agregada Casilla: "+String.valueOf(i+1)+", "+String.valueOf(j+1)+" a lista general.");
                 }
             }
         }
+       //ciclo mientras la lista general tenga elementos 
         while(this.general.getHead()!=null){
+            //se guarda un nodo aleatorio de la lista general
             Nodo casilla=this.general.buscarAleatorio();
+            //se elimina este nodo de la lista
             this.general.eliminar(casilla);
+            //se le borra su nodo siguiente
             casilla.setNext(null);
+            //print a consola
             System.out.println("Eliminada Casilla: "+String.valueOf(casilla.getI()+1)+", "+String.valueOf(casilla.getJ()+1)+" de lista general.");
+            //verifica si la cantidad de casillas de alrededor que no han sido 
+            //activadas es menor a la cantidad total de casillas alrededor
             if(checkAlrededor(casilla.getI(),casilla.getJ())<getAlrededor(casilla.getI(),casilla.getJ())){
+                //verifica que la casilla no sea humanamenteposible de saber que es mina
                 if(!casilla.getEsMina()){
+                    //revisa si la casilla es segura
                     if(checkSegura(casilla)){
+                        //en caso de ser segura se agrega a la lista segura
                         this.segura.agregar(casilla);
+                        //print a consola
                         System.out.println("Agregada Casilla: "+String.valueOf(casilla.getI()+1)+", "+String.valueOf(casilla.getJ()+1)+" a lista segura.");
                     }else{
+                        //en caso de no estar seguro se agrega a la lista incertidumbre
                         this.incertidumbre.agregar(casilla);
+                        //print a consola
                         System.out.println("Agregada Casilla: "+String.valueOf(casilla.getI()+1)+", "+String.valueOf(casilla.getJ()+1)+" a lista incertidumbre.");
                     }
                 }else{
+                    //si es humanamente posible saber que es mina la casilla no es segura
                     this.incertidumbre.agregar(casilla);
+                    //print a consola
                     System.out.println("Agregada Casilla: "+String.valueOf(casilla.getI()+1)+", "+String.valueOf(casilla.getJ()+1)+" a lista incertidumbre.");
                 }
                 
             }else{
+                //si la cantidad de casillas de alrededor que no han sido 
+                //activadas es igual a la cantidad total de casillas alrededor
+                //entonces la casilla no es segura
                 this.incertidumbre.agregar(casilla);
+                //print a consola
                 System.out.println("Agregada Casilla: "+String.valueOf(casilla.getI()+1)+", "+String.valueOf(casilla.getJ()+1)+" a lista incertidumbre.");
             }
         }
+        //verifica que la lista segura no este vacia
         if(this.segura.getHead()!=null){
+            //se juega una casilla aleatoria de la lista vacia
             Nodo jugada=this.segura.buscarAleatorio();
             checkCasilla(jugada.getI(),jugada.getJ(),true,1);
-            
+            //print a consola
             System.out.println("Casilla "+String.valueOf(jugada.getI()+1)+", "+String.valueOf(jugada.getJ()+1)+" jugada segura");
+        //en caso de no haber casillas seguras
         }else{
+            //se juega una casilla aleatoria de la lista insegura
             Nodo jugada=this.incertidumbre.buscarAleatorio();
             checkCasilla(jugada.getI(),jugada.getJ(),true,1);
+            //print a consola
             System.out.println("Casilla "+String.valueOf(jugada.getI()+1)+", "+String.valueOf(jugada.getJ()+1)+" jugada incertidumbre");
         }
+        //se elimina los datos de todas las listas y se reporta en consola
         this.general.eliminarLista();
         System.out.println("Lista general vacia");
         this.segura.eliminarLista();
@@ -516,10 +548,23 @@ public class FXMLAdvancedController implements Initializable {
         this.registro.eliminarLista();
     }
     
+    /**
+     * Metodo que verifica si una casilla es humanamente posible de verificar
+     * que es mina
+     * @param casilla, nodo con informacion de casilla a verificar
+     * @return booleano si es seguro para un humano saber si es mina
+     */
     public boolean checkMina(Nodo casilla){
+        //booleano a retornar empezando en falso
         boolean seguro=false;
+        //coordenadas de la casilla
         int i=casilla.getI();
         int j=casilla.getJ();
+        
+        //revisa si cada una de las casillas de alrededor esta activada,
+        //en caso de estar activada revisa cuantas casillas sin jugar hay alrededor
+        //y si este numero es igual al numero de minas que tiene alrededor esta
+        //casilla es mina
         try{
             if(this.tablero.getTablero()[i-1][j-1].getActivado()){
                 if(checkAlrededor(i-1,j-1)==checkCantidad(i-1,j-1)){
@@ -589,11 +634,21 @@ public class FXMLAdvancedController implements Initializable {
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
+        //retorno de booleano
         return seguro;
     }
     
+    /**
+     * Metodo que retorna la cantidad de minas que tiene una casilla alrededor
+     * @param i, coordenada fila
+     * @param j, coordenada columna
+     * @return numero de minas alrededor
+     */
     public int checkCantidad(int i,int j){
+        //se inicializa en 0 minas alrededor
         int cant=0;
+        //se revisa si todas las casillas de alrededor tienen mina, en caso de
+        //tener mina se le suma 1 al contador
         try{
             if(this.tablero.getTablero()[i-1][j-1].getEstado()){
                cant++;
@@ -642,11 +697,21 @@ public class FXMLAdvancedController implements Initializable {
             }
         }catch(ArrayIndexOutOfBoundsException exception){
         }
+        //retorno de cantidad
         return cant;
     }
     
+    /**
+     * Metodo que retorna cuantas casillas de alrededor no han sido jugadas
+     * @param i, coordenada de fila 
+     * @param j, coordenada de columna
+     * @return cantidad de casillas alrededor que no han sido jugadas
+     */
     public int checkAlrededor(int i, int j){
+        //cantidad se inicializa en 0
         int cant=0;
+        //verifica si cada una de las casillas de alrededor han sido activadas
+        //en caso de que no hayan sido activadas se suma uno al contador
         try{
             if(!this.tablero.getTablero()[i-1][j-1].getActivado()){
                cant++; 
@@ -698,8 +763,17 @@ public class FXMLAdvancedController implements Initializable {
         return cant;
     }
     
+    /**
+     * Metodo que retorna cuantas casillas hay alrededor de la casilla
+     * @param i, coordenada fila
+     * @param j, coordenada columna
+     * @return cantidad de casillas alrededor
+     */
     public int getAlrededor(int i, int j){
+        //contador se inicializa en 0
         int cant=0;
+        //se verifica si las casillas de alrededor existen, en caso de existir
+        //se suma 1 al contador
         try{
             this.tablero.getTablero()[i-1][j-1].getMina();
             cant++;
@@ -747,18 +821,29 @@ public class FXMLAdvancedController implements Initializable {
             
         }catch(ArrayIndexOutOfBoundsException exception){
         }
+        //retorno
         return cant;
     }
     
+    /**
+     * Metodo que verifica si una casilla es segura o no, mediante la cantidad 
+     * de casillas que tiene alrededor y la cantidad de minas humanamente posibles
+     * de encontrar alrededor de esta
+     * @param nodo, nodo con informacion de la casilla
+     * @return si la casilla es segura o no
+     */
     public boolean checkSegura(Nodo nodo){
+        //coordenadas 
         int i=nodo.getI();
         int j=nodo.getJ();
+        //booleano que indica si es segura o no
         boolean resultado=false;
+        //se revisa si cada una de las casillas de alrededor esta activadas, en 
+        //en caso de que si se verifica si el numero de minas que indica el juego
+        //es igual a la cantidad de minas humanamente detectadas, en caso que si
+        //la mina es segura,de lo contrario no es seguro 
         try{
             if(this.tablero.getTablero()[i-1][j-1].getActivado()){
-                System.out.println("1");
-                System.out.println(String.valueOf(checkCantidad(i-1,j-1)));
-                System.out.println(String.valueOf(checkHumano(i-1,j-1)));
                 if(checkCantidad(i-1,j-1)==checkHumano(i-1,j-1)) {
                     resultado=true;
                 }
@@ -845,9 +930,20 @@ public class FXMLAdvancedController implements Initializable {
         return resultado;
     }
     
+    /**
+     * Metodo que retorna la cantidad de minas humanamente posible de detectar
+     * alrededor de una casilla
+     * @param i, coordenadas fila
+     * @param j, coordenadas columna
+     * @return cantidad de minas humanamente posible de detectar
+     */
     public int checkHumano(int i, int j){
+        //se inicializa el contador en 0
         int cant=0;
         Nodo buscar;
+        //se busca en la copia de la lista general cada una de las casillas
+        //que rodea a la original y en caso de ser humanamente posible de detectar
+        //que es una mina se suma 1 al contador 
         buscar=this.registro.buscar(i-1, j-1);
         if(buscar!=null&&buscar.getEsMina()){
             cant++;
