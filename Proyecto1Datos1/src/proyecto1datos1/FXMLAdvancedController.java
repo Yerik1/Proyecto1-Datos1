@@ -30,7 +30,7 @@ import javax.swing.Timer;
  */
 public class FXMLAdvancedController implements Initializable {
     private int timer=0;
-    private boolean perdida=true;
+    private boolean perdida=false;
     private int total=10;
     private int minasRestantes= this.total;
     private int turno= 0;
@@ -852,9 +852,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i-1][j].getActivado()){
-                System.out.println("2");
-                System.out.println(String.valueOf(checkCantidad(i-1,j)));
-                System.out.println(String.valueOf(checkHumano(i-1,j)));
                 if(checkCantidad(i-1,j)==checkHumano(i-1,j)) {
                     resultado=true;
                 }  
@@ -863,9 +860,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i-1][j+1].getActivado()){
-                System.out.println("4");
-                System.out.println(String.valueOf(checkCantidad(i-1,j+1)));
-                System.out.println(String.valueOf(checkHumano(i-1,j+1)));
                 if(checkCantidad(i-1,j+1)==checkHumano(i-1,j+1)) {
                     resultado=true;
                 }  
@@ -874,9 +868,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i][j-1].getActivado()){
-                System.out.println("4");
-                System.out.println(String.valueOf(checkCantidad(i,j-1)));
-                System.out.println(String.valueOf(checkHumano(i,j-1)));
                 if(checkCantidad(i,j-1)==checkHumano(i,j-1)) {
                     resultado=true;
                 }  
@@ -885,9 +876,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i][j+1].getActivado()){
-                System.out.println("5");
-                System.out.println(String.valueOf(checkCantidad(i,j+1)));
-                System.out.println(String.valueOf(checkHumano(i,j+1)));
                 if(checkCantidad(i,j+1)==checkHumano(i,j+1)) {
                     resultado=true;
                 } 
@@ -896,9 +884,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i+1][j-1].getActivado()){
-                System.out.println("6");
-                System.out.println(String.valueOf(checkCantidad(i+1,j-1)));
-                System.out.println(String.valueOf(checkHumano(i+1,j-1)));
                 if(checkCantidad(i+1,j-1)==checkHumano(i+1,j-1)) {
                     resultado=true;
                 }  
@@ -907,9 +892,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i+1][j].getActivado()){
-                System.out.println("7");
-                System.out.println(String.valueOf(checkCantidad(i+1,j)));
-                System.out.println(String.valueOf(checkHumano(i+1,j)));
                 if(checkCantidad(i+1,j)==checkHumano(i+1,j)) {
                     resultado=true;
                 }       
@@ -918,9 +900,6 @@ public class FXMLAdvancedController implements Initializable {
         }
         try{
             if(this.tablero.getTablero()[i+1][j+1].getActivado()){
-                System.out.println("8");
-                System.out.println(String.valueOf(checkCantidad(i+1,j+1)));
-                System.out.println(String.valueOf(checkHumano(i+1,j+1)));
                 if(checkCantidad(i+1,j+1)==checkHumano(i+1,j+1)) {
                     resultado=true;
                 }

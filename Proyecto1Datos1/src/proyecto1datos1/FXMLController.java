@@ -4,6 +4,7 @@
  */
 package proyecto1datos1;
 
+import java.awt.Robot;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -50,6 +51,8 @@ public class FXMLController implements Initializable {
         //se asocia el contenido a la ventana y se abre la ventana
         stage.setScene(scene);
         stage.show();
+        ArduinoController arduino = new ArduinoController(stage);
+        arduino.start();
     }
 
     @FXML
@@ -65,6 +68,8 @@ public class FXMLController implements Initializable {
         //se asocia el contenido a la ventana y se abre la ventana
         stage.setScene(scene);
         stage.show();
+        ArduinoController arduino = new ArduinoController(stage);
+        arduino.start();
     }
     
 }
