@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="Proyecto1Datos1.jnlp">
+  <information>
+    <title>Proyecto1Datos1</title>
+    <vendor>kondy</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="Proyecto1Datos1.jar" size="28934" download="eager" />
+    <jar href="lib\jSerialComm-2.9.3.jar" size="895804" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="800" height="600" main-class="proyecto1datos1.Proyecto1Datos1"  name="Proyecto1Datos1" />
+  <update check="always"/>
+</jnlp>
