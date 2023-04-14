@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -44,15 +45,13 @@ public class FXMLController implements Initializable {
      * dummy
      */
     private void newDummy(ActionEvent event) throws Exception {
-        //se crea la ventana con el formato de juego dummy
         Stage stage= new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDummy.fxml"));
+        //Declara la escena a abrir
         Scene scene = new Scene(root);
-        //se asocia el contenido a la ventana y se abre la ventana
+        //Se ejecuta el abrir la escena
         stage.setScene(scene);
         stage.show();
-        ArduinoController arduino = new ArduinoController(stage);
-        arduino.start();
     }
 
     @FXML
@@ -61,15 +60,15 @@ public class FXMLController implements Initializable {
      * advanced
      */
     private void newAdvanced(ActionEvent event) throws Exception{
-        //se crea la ventana con el formato de juego advanced
         Stage stage= new Stage();
+        //se crea la ventana con el formato de juego advanced
         Parent root = FXMLLoader.load(getClass().getResource("FXMLAdvanced.fxml"));
+        //Declara la escena a abrir
         Scene scene = new Scene(root);
-        //se asocia el contenido a la ventana y se abre la ventana
+        //Se ejecuta el abrir la escena
+        
         stage.setScene(scene);
         stage.show();
-        ArduinoController arduino = new ArduinoController(stage);
-        arduino.start();
     }
     
 }
